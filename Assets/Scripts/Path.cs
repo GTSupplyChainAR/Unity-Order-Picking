@@ -26,8 +26,11 @@ public class PathReader
             throw new FileNotFoundException(filePath + " cannot be found.");
         }
     }
+    public int getPathId() {
+        return pathId;
+    }
     public bool setPathId(int id) {
-        if (id < 0 || id > patharr.Length)
+        if (id < 1 || id > patharr.Length)
         {
             return false;
         }
