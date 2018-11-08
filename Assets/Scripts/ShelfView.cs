@@ -28,6 +28,7 @@ public class ShelfView : MonoBehaviour
     };
     public void init()
     {
+        //Debug.Log("Init");
         highlight_row = -1;
         highlight_col = -1;
 
@@ -90,6 +91,7 @@ public class ShelfView : MonoBehaviour
     {
         string tag = bookInfo.book.tag;
         string[] loc = tag.Split('-');
+        //Debug.Log(row);
         int row_id = row[loc[3]];
         int col_id = column[loc[2]];
         string aisle = loc[1];
@@ -108,7 +110,8 @@ public class ShelfView : MonoBehaviour
     }
     void Start()
     {
-        init();
+        
+        //init();
     }
 
     // Update is called once per frame

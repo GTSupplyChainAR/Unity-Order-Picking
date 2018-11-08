@@ -66,8 +66,8 @@ public class UserSelectionView : MonoBehaviour {
         }
         refreshView();
     }
-    public string getSelectedUser() {
-        return usernames[selected_user_index];
+    public int getSelectedUserId() {
+        return selected_user_index;
     }
 	void Start () {
         init();
