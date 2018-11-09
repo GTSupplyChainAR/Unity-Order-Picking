@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.XR.WSA.Input;
-using HoloToolkit.Unity.InputModule;
 
 public class BookInfoView : MonoBehaviour
 {
