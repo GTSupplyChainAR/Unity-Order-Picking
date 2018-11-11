@@ -95,6 +95,7 @@ public class NavigationController : MonoBehaviour {
     private void userSelectionControl() {
         //Debug.Log("V " + Input.GetAxis("Vertical"));
         //Debug.Log("H " + Input.GetAxis("Horizontal"));
+<<<<<<< HEAD
         /*
                 2   
             0       3
@@ -115,6 +116,29 @@ public class NavigationController : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.Joystick1Button3) || Input.GetKeyDown(KeyCode.Joystick2Button3))
         {
            
+=======
+
+        if (Input.GetAxis("Vertical") == 1)
+        {
+            Thread.Sleep(sleepTime);
+            if (Input.GetAxis("Vertical") == 1)
+            {
+                userSelectionView.GetComponent<UserSelectionView>().selectNext();
+            }
+        }
+        else if (Input.GetAxis("Vertical") == -1)
+        {
+            Thread.Sleep(sleepTime);
+            if (Input.GetAxis("Vertical") == -1) {
+                userSelectionView.GetComponent<UserSelectionView>().selectLast();
+            }
+        }
+        else if (Input.GetAxis("Horizontal") == 1)
+        {
+            Thread.Sleep(sleepTime);
+            if (Input.GetAxis("Horizontal") == 1)
+            {
+>>>>>>> 3bf4174c1b52cc19dd2ad62c1344e3a7362ab4d1
                 selectedUserId = userSelectionView.GetComponent<UserSelectionView>().getSelectedUserId();
                 currentActiveView.SetActive(false);
                 phaseSelectionView.SetActive(true);
@@ -122,7 +146,11 @@ public class NavigationController : MonoBehaviour {
                 selectedPhase = 0;
                 phaseSelectionView.GetComponent<PhaseSelectionView>().setPhase(selectedPhase);
                 currentActiveView = phaseSelectionView;
+<<<<<<< HEAD
             
+=======
+            }
+>>>>>>> 3bf4174c1b52cc19dd2ad62c1344e3a7362ab4d1
         }
         else if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0)) {
             // no action
