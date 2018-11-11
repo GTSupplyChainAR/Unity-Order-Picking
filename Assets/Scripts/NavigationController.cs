@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.Networking;
+using System;
+using System.Threading;
+//using System.Globalization;
+
 public class NavigationController : MonoBehaviour {
 
 
     // data model;
-    private string selectedUsername = "";
+    private int selectedUserId = 0;
     private int selectedPhase = 0; // 0 indicates training, 1 indicates testing
     private int selectedPathId = 1;
     private int selectedBookNum = 0;
+    private string selectedBookTag = "";
+   
+    private Dictionary<int, string> record_posted_book;
     private PathReader pr;
-    private const string url = "http://eye";
+    private const string url = "https://eyegaze4605api.herokuapp.com/api/userData";
     /* view style config
     private Color selected_color = Color.blue;
     private Color unselected_color = Color.white;*/
-
+    private int sleepTime = 250;
     // views
     GameObject userSelectionView;
     GameObject phaseSelectionView;
@@ -33,6 +40,7 @@ public class NavigationController : MonoBehaviour {
         // data model init
         pr = new PathReader(Path.Combine(Application.streamingAssetsPath, "pick-paths.json"));
         pr.setPathId(selectedPathId);
+        record_posted_book = new Dictionary<int, string>();
         userSelectionView = GameObject.Find("User Selection View");
         userSelectionView.SetActive(true);
         phaseSelectionView = GameObject.Find("Phase Selection View");
@@ -42,7 +50,9 @@ public class NavigationController : MonoBehaviour {
         bookInfoView = GameObject.Find("Book Info View");
         bookInfoView.SetActive(false);
         shelfView = GameObject.Find("Shelf View");
+        shelfView.GetComponent<ShelfView>().init();
         shelfView.SetActive(false);
+        
         completionView = GameObject.Find("Completion View");
         completionView.SetActive(false);
         currentActiveView = userSelectionView;
@@ -50,12 +60,15 @@ public class NavigationController : MonoBehaviour {
 
     }
     private void postdata() {
-        /*WWWForm form = new WWWForm();
-        form.AddField("userId", selectedUsername);
-        form.AddField("userId", selectedUsername);
-        form.AddField("userId", selectedUsername);
-        
-        StartCoroutine(Upload(form));*/
+        WWWForm form = new WWWForm();
+        form.AddField("userId", selectedUserId);
+        form.AddField("phase", selectedPhase);
+        form.AddField("time", (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
+        form.AddField("pathId", selectedPathId);
+        form.AddField("bookTag", selectedBookTag);
+        form.AddField("device", 2);
+        form.AddField("viewPosition", 1);
+        StartCoroutine(Upload(form));
     }
     private IEnumerator Upload(WWWForm form) {
         var download = UnityWebRequest.Post(url, form);
@@ -72,41 +85,61 @@ public class NavigationController : MonoBehaviour {
     /*if ((Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0)) && bookNum < pr.getNumberOfBooksInPath() - 1)
     {
     }*/
+    private IEnumerator holdOn()
+    {
+        print("S " + Time.time);
+        yield return new WaitForSeconds(1);
+        print("E " + Time.time);
+    }
+    int x = 0;
     private void userSelectionControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        //Debug.Log("V " + Input.GetAxis("Vertical"));
+        //Debug.Log("H " + Input.GetAxis("Horizontal"));
+        /*
+                2   
+            0       3
+                1
+         */
+        if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Joystick2Button1))
         {
-            userSelectionView.GetComponent<UserSelectionView>().selectNext();
+            
+               userSelectionView.GetComponent<UserSelectionView>().selectNext();
+            
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.Joystick2Button2))
         {
-            userSelectionView.GetComponent<UserSelectionView>().selectLast();
+            
+                userSelectionView.GetComponent<UserSelectionView>().selectLast();
+            
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button3) || Input.GetKeyDown(KeyCode.Joystick2Button3))
         {
-            selectedUsername = userSelectionView.GetComponent<UserSelectionView>().getSelectedUser();
-            currentActiveView.SetActive(false);
-            phaseSelectionView.SetActive(true);
-            // clear next selection
-            selectedPhase = 0;
-            phaseSelectionView.GetComponent<PhaseSelectionView>().setPhase(selectedPhase);
-            currentActiveView = phaseSelectionView;
+           
+                selectedUserId = userSelectionView.GetComponent<UserSelectionView>().getSelectedUserId();
+                currentActiveView.SetActive(false);
+                phaseSelectionView.SetActive(true);
+                // clear next selection
+                selectedPhase = 0;
+                phaseSelectionView.GetComponent<PhaseSelectionView>().setPhase(selectedPhase);
+                currentActiveView = phaseSelectionView;
+            
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0)) {
             // no action
         }
     }
 
     private void phaseSelectionControl()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Joystick2Button1))
         {
             phaseSelectionView.GetComponent<PhaseSelectionView>().selectTesting();
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.Joystick2Button2))
         {
             phaseSelectionView.GetComponent<PhaseSelectionView>().selectTraining();
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button3) || Input.GetKeyDown(KeyCode.Joystick2Button3))
         {
             selectedPhase = phaseSelectionView.GetComponent<PhaseSelectionView>().getSelectedPhase();
             currentActiveView.SetActive(false);
@@ -115,7 +148,7 @@ public class NavigationController : MonoBehaviour {
             // setup next selection
             pathIdSelectionView.GetComponent<PathIdSelectionView>().setPhase(selectedPhase);
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0))
         {
             // go back to user selection
             currentActiveView.SetActive(false);
@@ -125,15 +158,15 @@ public class NavigationController : MonoBehaviour {
     }
 
     private void pathIdSelectionControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Joystick2Button1))
         {
             pathIdSelectionView.GetComponent<PathIdSelectionView>().selectNext();
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.Joystick2Button2))
         {
             pathIdSelectionView.GetComponent<PathIdSelectionView>().selectLast();
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button3) || Input.GetKeyDown(KeyCode.Joystick2Button3)) {
             selectedPathId = pathIdSelectionView.GetComponent<PathIdSelectionView>().getSelectedPathId();
             
             currentActiveView.SetActive(false);
@@ -144,10 +177,11 @@ public class NavigationController : MonoBehaviour {
             {
                 pr.setPathId(selectedPathId);
                 selectedBookNum = 0;
+                record_posted_book.Clear();
             }
             bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0)) {
             currentActiveView.SetActive(false);
             phaseSelectionView.SetActive(true);
             currentActiveView = phaseSelectionView;
@@ -156,7 +190,7 @@ public class NavigationController : MonoBehaviour {
 
     }
     private void bookInfoControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Joystick2Button1))
         {
             if (selectedBookNum + 1 < pr.getNumberOfBooksInPath())
             {
@@ -164,7 +198,7 @@ public class NavigationController : MonoBehaviour {
                 bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.Joystick2Button2))
         {
             if (selectedBookNum > 0)
             {
@@ -172,23 +206,35 @@ public class NavigationController : MonoBehaviour {
                 bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.A)) {
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button14) || Input.GetKeyDown(KeyCode.Joystick2Button14)) {
             // switch to shelf view
             currentActiveView.SetActive(false);
             shelfView.SetActive(true);
             currentActiveView = shelfView;
             shelfView.GetComponent<ShelfView>().highlightBlock(pr.getBookWithLocation(selectedBookNum));
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button15) || Input.GetKeyDown(KeyCode.Joystick2Button15))
         {
             // get the book, send server data
-            postdata();
-            // go to next, or notify completion.
-            currentActiveView.SetActive(false);
-            completionView.SetActive(true);
-            currentActiveView = completionView;
+            if (!record_posted_book.ContainsKey(selectedBookNum))
+            {
+                selectedBookTag = pr.getBookWithLocation(selectedBookNum).book.tag;
+                //Debug.Log(selectedBookTag + " " + (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds);
+                postdata();
+                record_posted_book.Add(selectedBookNum, "pick");
+            }
+            if (record_posted_book.Count >= pr.getNumberOfBooksInPath())
+            {
+                // go to next, or notify completion.
+                currentActiveView.SetActive(false);
+                completionView.SetActive(true);
+                currentActiveView = completionView;
+            }
+            else {
+
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0))
         {
             currentActiveView.SetActive(false);
             pathIdSelectionView.SetActive(true);
@@ -196,19 +242,21 @@ public class NavigationController : MonoBehaviour {
         }
     }
     private void completionControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.anyKeyDown)
         {
-            selectedUsername = "";
+            selectedUserId = 0;
             selectedPhase = 0; // 0 indicates training, 1 indicates testing
             selectedPathId = 1;
             selectedBookNum = 0;
+            selectedBookTag = "";
+            record_posted_book.Clear();
             currentActiveView.SetActive(false);
             userSelectionView.SetActive(true);
             currentActiveView = userSelectionView;
         }
     }
     private void shelfControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Joystick2Button1))
         {
             if (selectedBookNum + 1 < pr.getNumberOfBooksInPath())
             {
@@ -216,7 +264,7 @@ public class NavigationController : MonoBehaviour {
                 shelfView.GetComponent<ShelfView>().highlightBlock(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button2) || Input.GetKeyDown(KeyCode.Joystick2Button2))
         {
             if (selectedBookNum > 0)
             {
@@ -224,7 +272,7 @@ public class NavigationController : MonoBehaviour {
                 shelfView.GetComponent<ShelfView>().highlightBlock(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button14) || Input.GetKeyDown(KeyCode.Joystick2Button14))
         {
             // switch to book info view
             currentActiveView.SetActive(false);
@@ -232,15 +280,28 @@ public class NavigationController : MonoBehaviour {
             currentActiveView = bookInfoView;
             bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button15) || Input.GetKeyDown(KeyCode.Joystick2Button15))
         {
             // get the book, send server data
-            // go to next, or notify completion.
-            currentActiveView.SetActive(false);
-            completionView.SetActive(true);
-            currentActiveView = completionView;
+            if (!record_posted_book.ContainsKey(selectedBookNum))
+            {
+                selectedBookTag = pr.getBookWithLocation(selectedBookNum).book.tag;
+                postdata();
+                record_posted_book.Add(selectedBookNum, "pick");
+            }
+            if (record_posted_book.Count >= pr.getNumberOfBooksInPath())
+            {
+                // go to next, or notify completion.
+                currentActiveView.SetActive(false);
+                completionView.SetActive(true);
+                currentActiveView = completionView;
+            }
+            else
+            {
+
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Joystick2Button0))
         {
             currentActiveView.SetActive(false);
             pathIdSelectionView.SetActive(true);
