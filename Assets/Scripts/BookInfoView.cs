@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
-using UnityEngine.XR.WSA.Input;
 
 public class BookInfoView : MonoBehaviour
 {

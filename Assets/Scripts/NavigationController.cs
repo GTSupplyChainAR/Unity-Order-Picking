@@ -96,25 +96,30 @@ public class NavigationController : MonoBehaviour {
         //Debug.Log("V " + Input.GetAxis("Vertical"));
         //Debug.Log("H " + Input.GetAxis("Horizontal"));
 
-        if (Input.GetAxis("Vertical") == 1)
+        //if (Input.GetAxis("Vertical") == 1)
+        if (Input.GetKeyDown(KeyCode.H))
         {
             Thread.Sleep(sleepTime);
-            if (Input.GetAxis("Vertical") == 1)
+            if (Input.GetKeyDown(KeyCode.H))
+            //if (Input.GetAxis("Vertical") == 1)
             {
                 userSelectionView.GetComponent<UserSelectionView>().selectNext();
             }
         }
-        else if (Input.GetAxis("Vertical") == -1)
+        //else if (Input.GetAxis("Vertical") == -1)
+        else if (Input.GetKeyDown(KeyCode.F))
         {
             Thread.Sleep(sleepTime);
-            if (Input.GetAxis("Vertical") == -1) {
+            if (Input.GetKeyDown(KeyCode.F)) {
                 userSelectionView.GetComponent<UserSelectionView>().selectLast();
             }
         }
-        else if (Input.GetAxis("Horizontal") == 1)
+        //else if (Input.GetAxis("Horizontal") == 1)
+        else if (Input.GetKeyDown(KeyCode.G))
         {
             Thread.Sleep(sleepTime);
-            if (Input.GetAxis("Horizontal") == 1)
+            //if (Input.GetAxis("Horizontal") == 1)
+            if (Input.GetKeyDown(KeyCode.G))
             {
                 selectedUserId = userSelectionView.GetComponent<UserSelectionView>().getSelectedUserId();
                 currentActiveView.SetActive(false);
@@ -132,15 +137,18 @@ public class NavigationController : MonoBehaviour {
 
     private void phaseSelectionControl()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        //if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.H))
         {
             phaseSelectionView.GetComponent<PhaseSelectionView>().selectTesting();
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        //else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.F))
         {
             phaseSelectionView.GetComponent<PhaseSelectionView>().selectTraining();
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        //else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.G))
         {
             selectedPhase = phaseSelectionView.GetComponent<PhaseSelectionView>().getSelectedPhase();
             currentActiveView.SetActive(false);
@@ -149,7 +157,8 @@ public class NavigationController : MonoBehaviour {
             // setup next selection
             pathIdSelectionView.GetComponent<PathIdSelectionView>().setPhase(selectedPhase);
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        //else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Backspace))
         {
             // go back to user selection
             currentActiveView.SetActive(false);
@@ -159,15 +168,19 @@ public class NavigationController : MonoBehaviour {
     }
 
     private void pathIdSelectionControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        //if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.H))
         {
             pathIdSelectionView.GetComponent<PathIdSelectionView>().selectNext();
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        //else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.F))
         {
             pathIdSelectionView.GetComponent<PathIdSelectionView>().selectLast();
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+        //else if (Input.GetKeyDown(KeyCode.RightArrow)) 
+        else if (Input.GetKeyDown(KeyCode.G))
+        {
             selectedPathId = pathIdSelectionView.GetComponent<PathIdSelectionView>().getSelectedPathId();
             
             currentActiveView.SetActive(false);
@@ -182,7 +195,9 @@ public class NavigationController : MonoBehaviour {
             }
             bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+        //else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Backspace))
+        {
             currentActiveView.SetActive(false);
             phaseSelectionView.SetActive(true);
             currentActiveView = phaseSelectionView;
@@ -191,7 +206,8 @@ public class NavigationController : MonoBehaviour {
 
     }
     private void bookInfoControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        //if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             if (selectedBookNum + 1 < pr.getNumberOfBooksInPath())
             {
@@ -199,7 +215,8 @@ public class NavigationController : MonoBehaviour {
                 bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        //else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.H))
         {
             if (selectedBookNum > 0)
             {
@@ -207,14 +224,17 @@ public class NavigationController : MonoBehaviour {
                 bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.A)) {
+        //else if (Input.GetKeyDown(KeyCode.A)) {
+        else if (Input.GetKeyDown(KeyCode.C))
+        {
             // switch to shelf view
             currentActiveView.SetActive(false);
             shelfView.SetActive(true);
             currentActiveView = shelfView;
             shelfView.GetComponent<ShelfView>().highlightBlock(pr.getBookWithLocation(selectedBookNum));
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        //else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.G))
         {
             // get the book, send server data
             if (!record_posted_book.ContainsKey(selectedBookNum))
@@ -235,15 +255,18 @@ public class NavigationController : MonoBehaviour {
 
             }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        //else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Backspace))
         {
             currentActiveView.SetActive(false);
             pathIdSelectionView.SetActive(true);
             currentActiveView = pathIdSelectionView;
         }
     }
-    private void completionControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+    private void completionControl()
+    {
+        //if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             selectedUserId = 0;
             selectedPhase = 0; // 0 indicates training, 1 indicates testing
@@ -257,7 +280,8 @@ public class NavigationController : MonoBehaviour {
         }
     }
     private void shelfControl() {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        //if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.F))
         {
             if (selectedBookNum + 1 < pr.getNumberOfBooksInPath())
             {
@@ -265,7 +289,8 @@ public class NavigationController : MonoBehaviour {
                 shelfView.GetComponent<ShelfView>().highlightBlock(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        //else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (Input.GetKeyDown(KeyCode.H))
         {
             if (selectedBookNum > 0)
             {
@@ -273,7 +298,8 @@ public class NavigationController : MonoBehaviour {
                 shelfView.GetComponent<ShelfView>().highlightBlock(pr.getBookWithLocation(selectedBookNum));
             }
         }
-        else if (Input.GetKeyDown(KeyCode.A))
+        //else if (Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKeyDown(KeyCode.C))
         {
             // switch to book info view
             currentActiveView.SetActive(false);
@@ -281,7 +307,8 @@ public class NavigationController : MonoBehaviour {
             currentActiveView = bookInfoView;
             bookInfoView.GetComponent<BookInfoView>().highlightBookInfo(pr.getBookWithLocation(selectedBookNum));
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        //else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.G))
         {
             // get the book, send server data
             if (!record_posted_book.ContainsKey(selectedBookNum))
@@ -302,7 +329,8 @@ public class NavigationController : MonoBehaviour {
 
             }
         }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        //else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        else if (Input.GetKeyDown(KeyCode.Backspace))
         {
             currentActiveView.SetActive(false);
             pathIdSelectionView.SetActive(true);

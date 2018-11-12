@@ -303,9 +303,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 54407749}
-  m_Text: 'Use joystick to select either training or testing.
-
-    Press A to enter.'
+  m_Text: Press G to select
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -2885,7 +2883,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 745582834}
-  m_Text: Press A to select a path
+  m_Text: Press G to select a path
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -5760,7 +5758,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1925811658}
-  m_Text: Press A to select a user
+  m_Text: "Use F (\u2191) and H (\u2193) to pick user\nPress G to select a user"
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
